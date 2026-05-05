@@ -1,164 +1,179 @@
-import React from 'react';
-import { Search, RotateCw, ShoppingCart, TrendingUp, CheckCircle, AlertTriangle } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockQuest | Never Miss a Restock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #09090b; color: white; }
+        .glass { background: rgba(18, 18, 20, 0.8); backdrop-filter: blur(10px); }
+        .gradient-text {
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-hover:hover { border-color: #a855f7; transform: translateY(-4px); transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="font-sans">
 
-const StockQuest = () => {
-  const games = [
-    { id: 1, title: "Red Dead Redemption 2", price: 15.68, rating: 97, year: 2018, retailers: 4, image: "/rdr2.jpg", trending: true },
-    { id: 2, title: "Elden Ring", price: 34.02, rating: 96, year: 2022, retailers: 3, image: "/elden.jpg", trending: true },
-    // Add more game objects here
-  ];
-
-  return (
-    <div className="min-h-screen bg-[#09090b] text-white font-sans">
-      {/* Navigation */}
-      <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-800 sticky top-0 bg-[#09090b]/80 backdrop-blur-md z-50">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2 text-purple-500 font-bold text-xl">
-            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white">🎮</div>
-            StockQuest
-          </div>
-          <div className="hidden md:flex gap-6 text-gray-400 text-sm">
-            <a href="#" className="hover:text-white transition">Home</a>
-            <a href="#" className="hover:text-white transition">Browse</a>
-            <a href="#" className="hover:text-white transition">Wishlist</a>
-          </div>
+    <nav class="flex items-center justify-between px-6 py-4 border-b border-gray-800 sticky top-0 glass z-50">
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-2 text-purple-500 font-bold text-xl">
+                <i class="fas fa-gamepad bg-purple-600 text-white p-2 rounded-lg"></i>
+                StockQuest
+            </div>
+            <div class="hidden md:flex gap-6 text-gray-400 text-sm">
+                <a href="#" class="hover:text-white">Home</a>
+                <a href="#" class="hover:text-white">Browse</a>
+                <a href="#" class="hover:text-white">Wishlist</a>
+            </div>
         </div>
-        
-        <div className="flex gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
-            <input 
-              placeholder="Search games, developers..." 
-              className="bg-[#18181b] border border-gray-800 rounded-lg py-2 pl-10 pr-4 text-sm w-64 focus:outline-none focus:border-purple-500"
-            />
-          </div>
-          <button className="flex items-center gap-2 bg-[#18181b] px-4 py-2 rounded-lg text-sm font-medium border border-gray-800 hover:bg-gray-800 transition">
-            <RotateCw className="w-4 h-4" /> Sync Stock
-          </button>
+        <div class="flex items-center gap-4">
+            <div class="relative hidden md:block">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-500 text-xs"></i>
+                <input type="text" placeholder="Search games..." class="bg-[#18181b] border border-gray-800 rounded-lg py-2 pl-9 pr-4 text-sm w-64 outline-none focus:border-purple-500">
+            </div>
+            <button class="bg-[#18181b] border border-gray-800 px-4 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-800">
+                <i class="fas fa-sync-alt"></i> Sync Stock
+            </button>
         </div>
-      </nav>
+    </nav>
 
-      {/* Hero Section */}
-      <header className="max-w-6xl mx-auto pt-20 pb-12 px-6 text-center">
-        <div className="inline-flex items-center gap-2 bg-purple-900/30 text-purple-400 px-3 py-1 rounded-full text-xs font-bold mb-6">
-          <TrendingUp className="w-3 h-3" /> Live tracking across 5 retailers
+    <header class="max-w-4xl mx-auto text-center pt-16 pb-12 px-6">
+        <div class="inline-block bg-purple-900/30 text-purple-400 text-xs font-bold px-3 py-1 rounded-full mb-6 border border-purple-500/20">
+            <i class="fas fa-bolt mr-2"></i> LIVE TRACKING ACROSS 5 RETAILERS
         </div>
-        <h1 className="text-6xl font-extrabold mb-6">
-          Never miss a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">restock.</span>
-        </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-10">
-          Track real-time stock and prices for every video game across Amazon, Best Buy, GameStop, Walmart, and Target — all in one beautiful place.
-        </p>
-        <div className="flex justify-center gap-4">
-          <button className="bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 rounded-xl font-bold hover:opacity-90 transition shadow-lg shadow-purple-500/20">
-            Browse Games ➔
-          </button>
-          <button className="bg-[#18181b] border border-gray-800 px-8 py-3 rounded-xl font-bold hover:bg-gray-800 transition">
-            How it works
-          </button>
+        <h1 class="text-5xl md:text-6xl font-extrabold mb-6">Never miss a <span class="gradient-text">restock.</span></h1>
+        <p class="text-gray-400 text-lg mb-8">Track real-time stock and prices across Amazon, Best Buy, GameStop, Walmart, and Target — all in one beautiful place.</p>
+        <div class="flex flex-col md:flex-row justify-center gap-4">
+            <button class="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-xl font-bold transition">Browse Games <i class="fas fa-chevron-right ml-2 text-xs"></i></button>
+            <button class="bg-[#18181b] border border-gray-800 px-8 py-3 rounded-xl font-bold hover:bg-gray-800 transition"><i class="far fa-bell mr-2"></i> How it works</button>
         </div>
-      </header>
+    </header>
 
-      {/* Stats Cards */}
-      <section className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 px-6 mb-20">
-        {[
-          { label: "Games tracked", val: "30", icon: <TrendingUp />, color: "text-blue-400" },
-          { label: "In stock now", val: "102", icon: <CheckCircle />, color: "text-green-400" },
-          { label: "Low stock", val: "23", icon: <AlertTriangle />, color: "text-yellow-400" },
-          { label: "Retailers", val: "5", icon: <ShoppingCart />, color: "text-purple-400" },
-        ].map((stat, i) => (
-          <div key={i} className="bg-[#121214] border border-gray-800 p-6 rounded-2xl">
-            <div className={`${stat.color} mb-4`}>{stat.icon}</div>
-            <div className="text-3xl font-bold">{stat.val}</div>
-            <div className="text-gray-500 text-sm">{stat.label}</div>
-          </div>
-        ))}
-      </section>
+    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 px-6 mb-16">
+        <div class="bg-[#121214] border border-gray-800 p-6 rounded-2xl">
+            <i class="fas fa-chart-line text-blue-400 mb-4"></i>
+            <div class="text-3xl font-bold">30</div>
+            <div class="text-gray-500 text-xs">Games tracked</div>
+        </div>
+        <div class="bg-[#121214] border border-gray-800 p-6 rounded-2xl">
+            <i class="far fa-check-circle text-green-400 mb-4"></i>
+            <div class="text-3xl font-bold">102</div>
+            <div class="text-gray-500 text-xs">In stock now</div>
+        </div>
+        <div class="bg-[#121214] border border-gray-800 p-6 rounded-2xl">
+            <i class="fas fa-exclamation-triangle text-yellow-400 mb-4"></i>
+            <div class="text-3xl font-bold">23</div>
+            <div class="text-gray-500 text-xs">Low stock</div>
+        </div>
+        <div class="bg-[#121214] border border-gray-800 p-6 rounded-2xl">
+            <i class="fas fa-shopping-cart text-purple-400 mb-4"></i>
+            <div class="text-3xl font-bold">5</div>
+            <div class="text-gray-500 text-xs">Retailers</div>
+        </div>
+    </div>
 
-      {/* Trending Section */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
-          <TrendingUp className="text-pink-500 w-5 h-5" /> Trending Now
+    <main class="max-w-6xl mx-auto px-6 pb-20">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <i class="fas fa-fire text-pink-500"></i> Trending Now
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {games.map(game => (
-            <GameCard key={game.id} {...game} />
-          ))}
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            
+            <div class="bg-[#121214] border border-gray-800 rounded-2xl overflow-hidden card-hover">
+                <div class="relative h-64 bg-gray-900">
+                    <img src="https://image.api.playstation.com/cdn/UP1004/CUSA03041_00/Hpl5msSxxGEhyuYpSJpSOT9Sj9S9Sj9S.png" class="w-full h-full object-cover opacity-80" alt="RDR2">
+                    <div class="absolute top-3 left-3 flex gap-2">
+                        <span class="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded-full border border-green-500/30">● IN STOCK</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold mb-1">Red Dead Redemption 2</h3>
+                    <div class="flex items-center gap-2 text-[10px] text-gray-500 mb-4">
+                        <span><i class="fas fa-star text-yellow-500"></i> 97</span> • <span>2018</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <div class="text-xl font-bold">$15.68</div>
+                            <div class="text-[10px] text-green-500">4 retailers</div>
+                        </div>
+                        <i class="far fa-heart text-gray-500 cursor-pointer hover:text-red-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#121214] border border-gray-800 rounded-2xl overflow-hidden card-hover">
+                <div class="relative h-64 bg-gray-900">
+                    <img src="https://image.api.playstation.com/vulcan/ap/rnd/202110/2000/aajmra9By5pJHvY7Nf0DcaYF.png" class="w-full h-full object-cover opacity-80" alt="Elden Ring">
+                    <div class="absolute top-3 left-3 flex flex-col gap-2">
+                        <span class="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded-full border border-green-500/30">● IN STOCK</span>
+                        <span class="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-2 py-1 rounded-full border border-purple-500/30 italic">TRENDING</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold mb-1">Elden Ring</h3>
+                    <div class="flex items-center gap-2 text-[10px] text-gray-500 mb-4">
+                        <span><i class="fas fa-star text-yellow-500"></i> 96</span> • <span>2022</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <div class="text-xl font-bold">$34.02</div>
+                            <div class="text-[10px] text-green-500">3 retailers</div>
+                        </div>
+                        <i class="far fa-heart text-gray-500 cursor-pointer hover:text-red-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+
+        <div class="mt-16">
+            <h2 class="text-xl font-bold mb-6">Price Comparison (Red Dead Redemption 2)</h2>
+            <div class="bg-[#121214] border border-gray-800 rounded-2xl overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-[#18181b] text-gray-400 text-xs uppercase">
+                        <tr>
+                            <th class="p-4">Retailer</th>
+                            <th class="p-4">Price</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800">
+                        <tr>
+                            <td class="p-4 font-bold flex items-center gap-2">
+                                <div class="w-8 h-8 bg-red-900 rounded flex items-center justify-center text-[10px]">GS</div>
+                                GameStop <span class="text-[10px] bg-green-900 text-green-400 px-2 py-0.5 rounded">BEST DEAL</span>
+                            </td>
+                            <td class="p-4">
+                                <span class="text-lg font-bold">$15.68</span>
+                                <span class="text-xs text-red-500 ml-2">-36%</span>
+                            </td>
+                            <td class="p-4 text-sm text-green-400">● In Stock</td>
+                            <td class="p-4 text-right">
+                                <button class="bg-purple-600 px-4 py-2 rounded-lg font-bold text-sm">Buy ↗</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold flex items-center gap-2">
+                                <div class="w-8 h-8 bg-yellow-600 rounded flex items-center justify-center text-[10px] text-black">AMZ</div>
+                                Amazon
+                            </td>
+                            <td class="p-4"><span class="text-lg font-bold">$20.18</span></td>
+                            <td class="p-4 text-sm text-green-400">● In Stock</td>
+                            <td class="p-4 text-right">
+                                <button class="bg-gray-800 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-700">Buy ↗</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </section>
-    </div>
-  );
-};
+    </main>
 
-// Sub-component for individual games
-const GameCard = ({ title, price, rating, year, retailers, trending }) => (
-  <div className="bg-[#121214] border border-gray-800 rounded-2xl overflow-hidden group cursor-pointer hover:border-purple-500 transition-all duration-300">
-    <div className="relative aspect-[3/4] bg-gray-800">
-      <div className="absolute top-3 left-3 flex flex-col gap-2">
-        <span className="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur-md border border-green-500/30">
-          ● In Stock
-        </span>
-        {trending && (
-          <span className="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur-md border border-purple-500/30">
-            📈 TRENDING
-          </span>
-        )}
-      </div>
-    </div>
-    <div className="p-4">
-      <h3 className="font-bold text-lg mb-1 truncate">{title}</h3>
-      <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
-        <span>⭐ {rating}</span>
-        <span>•</span>
-        <span>{year}</span>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="text-xl font-bold">${price}</span>
-        <span className="text-[10px] text-green-500 font-medium">{retailers} retailers</span>
-      </div>
-    </div>
-  </div>
-);
-
-export default StockQuest;
-const RetailerComparison = () => {
-  const data = [
-    { name: "GameStop", price: 15.68, status: "In Stock", ship: "$4.99 ship", best: true },
-    { name: "Amazon", price: 20.18, status: "In Stock", ship: "Free pickup", best: false },
-    { name: "Walmart", price: 20.63, status: "Low Stock", ship: "$4.99 ship", best: false },
-  ];
-
-  return (
-    <div className="w-full bg-[#121214] border border-gray-800 rounded-2xl overflow-hidden">
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
-            <th className="p-4 font-medium">Retailer</th>
-            <th className="p-4 font-medium">Price</th>
-            <th className="p-4 font-medium">Status</th>
-            <th className="p-4 font-medium text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, idx) => (
-            <tr key={idx} className="border-b border-gray-800/50 hover:bg-white/5 transition">
-              <td className="p-4 font-bold">{item.name} {item.best && <span className="ml-2 text-[10px] bg-green-900 text-green-400 px-2 py-0.5 rounded">BEST DEAL</span>}</td>
-              <td className="p-4 font-bold text-lg">${item.price}</td>
-              <td className="p-4 text-sm">
-                <span className={item.status === "In Stock" ? "text-green-400" : "text-yellow-400"}>
-                  ● {item.status}
-                </span>
-                <div className="text-[10px] text-gray-500">{item.ship}</div>
-              </td>
-              <td className="p-4 text-right">
-                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md shadow-purple-500/20">
-                  Buy ↗
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+</body>
+</html>
