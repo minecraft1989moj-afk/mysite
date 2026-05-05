@@ -3,224 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockQuest - Live Game Deals</title>
+    <title>StockQuest Live</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-[#0B0914]">
+<body class="bg-[#0B0914] text-white">
     <div id="root"></div>
 
     <script type="text/babel">
-        // Browser-friendly hooks for your Tablet
         const { useState, useEffect } = React;
-        const { 
-          Home, LayoutGrid, Heart, Search, RefreshCw, Bell, BarChart2, 
-          CheckCircle2, AlertCircle, ShoppingCart, TrendingUp, Zap, Star, 
-          ExternalLink, Filter, ChevronRight, ArrowLeft, Sparkles, Loader2, 
-          Gamepad2, MonitorPlay, Disc, Gift, Flame, Layers, DownloadCloud, X, Store 
-        } = lucide;
-
-        // --- ROBUST IMAGE FALLBACK ---
-        const ABSOLUTE_FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900"%3E%3Crect fill="%23151221" width="600" height="900"/%3E%3Cpath fill="%232D283E" d="M250 400h100v100H250z"/%3E%3Ctext fill="%234B5563" font-family="system-ui, sans-serif" font-size="20" font-weight="600" x="50%25" y="55%25" dominant-baseline="middle" text-anchor="middle"%3ENo Cover Available%3C/text%3E%3C/svg%3E';
-
-        const STEAM_POSTER_BASE = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps';
-        const INITIAL_CURATED = {
-          trending: [
-            { id: 't1', title: 'Elden Ring', price: 39.99, rating: 96, year: 2022, image: `${STEAM_POSTER_BASE}/1245620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '235201' },
-            { id: 't2', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
-            { id: 't3', title: 'Horizon Zero Dawn', price: 12.49, rating: 88, year: 2020, image: `${STEAM_POSTER_BASE}/1151640/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '213963' },
-            { id: 't4', title: 'God of War', price: 24.99, rating: 94, year: 2022, image: `${STEAM_POSTER_BASE}/1593500/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '236200' },
-            { id: 't5', title: 'Portal 2', price: 0.99, rating: 95, year: 2011, image: `${STEAM_POSTER_BASE}/620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '2' },
-            { id: 't6', title: 'The Last of Us Part I', price: 39.99, rating: 88, year: 2023, image: `${STEAM_POSTER_BASE}/1888930/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '249159' },
-            { id: 't7', title: 'Marvel\'s Spider-Man Remastered', price: 35.99, rating: 87, year: 2022, image: `${STEAM_POSTER_BASE}/1817070/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '241191' },
-            { id: 't8', title: 'Diablo IV', price: 34.99, rating: 86, year: 2023, image: `${STEAM_POSTER_BASE}/2344520/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '254580' },
-          ],
-          inStock: [
-            { id: 's1', title: 'Elden Ring', price: 39.99, rating: 96, year: 2022, image: `${STEAM_POSTER_BASE}/1245620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '235201' },
-            { id: 's2', title: 'Baldur\'s Gate 3', price: 59.99, rating: 97, year: 2023, image: `${STEAM_POSTER_BASE}/1086940/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '206733' },
-            { id: 's3', title: 'Cyberpunk 2077', price: 29.99, rating: 86, year: 2020, image: `${STEAM_POSTER_BASE}/1091500/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '197731' },
-            { id: 's4', title: 'The Witcher 3: Wild Hunt', price: 9.99, rating: 93, year: 2015, image: `${STEAM_POSTER_BASE}/292030/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '112330' },
-            { id: 's5', title: 'Hogwarts Legacy', price: 29.99, rating: 88, year: 2023, image: `${STEAM_POSTER_BASE}/990080/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '243001' },
-            { id: 's6', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
-            { id: 's7', title: 'Grand Theft Auto V', price: 14.99, rating: 96, year: 2013, image: `${STEAM_POSTER_BASE}/271590/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '103550' },
-            { id: 's8', title: 'Hollow Knight', price: 7.49, rating: 90, year: 2017, image: `${STEAM_POSTER_BASE}/367520/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '166162' },
-          ],
-          editorsPicks: [
-            { id: 'e1', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
-            { id: 'e2', title: 'Stardew Valley', price: 11.99, rating: 89, year: 2016, image: `${STEAM_POSTER_BASE}/413150/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '143140' },
-            { id: 'e3', title: 'Sekiro: Shadows Die Twice', price: 29.99, rating: 90, year: 2019, image: `${STEAM_POSTER_BASE}/814380/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '189912' },
-            { id: 'e4', title: 'Marvel\'s Spider-Man Remastered', price: 35.99, rating: 87, year: 2022, image: `${STEAM_POSTER_BASE}/1817070/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '241191' },
-          ]
-        };
-
-        const ICON_MAP = { '1': Zap, '2': Gamepad2, '3': MonitorPlay, '7': Disc, '8': DownloadCloud, '11': Gift, '15': Flame, '25': Layers };
-
-        const generateGeminiContent = async (prompt, isJson = false) => {
-          const apiKey = ""; 
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-          const payload = { contents: [{ parts: [{ text: prompt }] }] };
-          if (isJson) payload.generationConfig = { responseMimeType: "application/json" };
-          try {
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const data = await response.json();
-            return data.candidates?.[0]?.content?.parts?.[0]?.text;
-          } catch (err) { return null; }
-        };
-
-        const GameImage = ({ src, fallbackSrc, alt, className }) => {
-          const [imgSrc, setImgSrc] = useState(src || fallbackSrc || ABSOLUTE_FALLBACK_IMAGE);
-          const [hasError, setHasError] = useState(false);
-          const handleError = () => { if (!hasError && fallbackSrc && imgSrc !== fallbackSrc) { setImgSrc(fallbackSrc); setHasError(true); } else { setImgSrc(ABSOLUTE_FALLBACK_IMAGE); } };
-          return <img src={imgSrc} alt={alt} onError={handleError} className={className} loading="lazy" />;
-        };
-
-        const StatusBadge = ({ status }) => {
-          const style = status === 'In Stock' ? "bg-[#059669]/20 border-[#059669]/30 text-[#34D399]" : "bg-[#D97706]/20 border-[#D97706]/30 text-[#FBBF24]";
-          const dot = status === 'In Stock' ? "bg-[#10B981]" : "bg-[#F59E0B]";
-          return (
-            <div className={`flex items-center gap-1.5 backdrop-blur-md px-2.5 py-1 rounded-full border ${style}`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${dot}`}></div>
-              <span className="text-xs font-semibold tracking-wide uppercase">{status}</span>
-            </div>
-          );
-        };
-
-        const GameCard = ({ game, onClick }) => (
-          <div onClick={() => onClick(game)} className="group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:ring-2 hover:ring-purple-500/50 bg-[#151221]">
-            <div className="aspect-[2/3] w-full relative bg-[#1A1625]">
-              <GameImage src={game.image} fallbackSrc={game.fallbackImage} alt={game.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0914] via-[#0B0914]/40 to-transparent"></div>
-              <div className="absolute top-0 left-0 right-0 p-3 flex justify-between items-start">
-                <div className="flex flex-col items-start gap-1">
-                  <StatusBadge status={game.status} />
-                  {game.trending && (
-                    <div className="flex items-center gap-1.5 bg-[#7C3AED]/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#7C3AED]/30">
-                      <TrendingUp size={12} className="text-[#A78BFA]" />
-                      <span className="text-[10px] font-bold text-[#A78BFA] tracking-wider uppercase">Trending</span>
-                    </div>
-                  )}
-                </div>
-                <button onClick={(e) => { e.stopPropagation(); }} className="p-2 rounded-full bg-black/40 backdrop-blur-sm text-gray-300 hover:text-white hover:bg-black/60 shadow-lg"><Heart size={18} /></button>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <h3 className="text-white font-bold text-lg mb-2 leading-tight line-clamp-2">{game.title}</h3>
-                <div className="flex items-end justify-between">
-                  <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <div className="flex items-center gap-1 text-[#FBBF24]"><Star size={14} fill="currentColor" /><span>{game.rating}</span></div>
-                    <span>•</span><span>{game.year}</span>
-                  </div>
-                  <div className="text-right"><div className="text-white font-bold text-xl">${game.price.toFixed(2)}</div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-        const LoadingGrid = () => (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {[...Array(10)].map((_, i) => <div key={i} className="rounded-2xl aspect-[2/3] bg-white/5 animate-pulse border border-white/10"></div>)}
-          </div>
-        );
-
-        const HomeView = ({ curGames, liveCount, navigateTo }) => (
-          <div className="pb-20">
-            <section className="relative pt-24 pb-20 px-6 border-b border-white/5 overflow-hidden">
-              <div className="max-w-7xl mx-auto relative z-10">
-                <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-[1.1]">Never miss a <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A855F7] to-[#EC4899]">restock.</span></h1>
-                <p className="text-lg text-gray-400 max-w-2xl mb-10">Track real-time digital stock and prices across all major stores.</p>
-                <button onClick={() => navigateTo('browse')} className="bg-gradient-to-r from-[#A855F7] to-[#D946EF] text-white px-8 py-3.5 rounded-xl font-semibold shadow-lg">Browse Live Deals</button>
-              </div>
-            </section>
-            <section className="max-w-7xl mx-auto px-6 py-16">
-              <h2 className="text-sm font-bold text-[#A855F7] tracking-widest uppercase mb-8">Trending Live</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">{curGames.trending.map(g => <GameCard key={g.id} game={g} onClick={() => navigateTo('detail', g)} />)}</div>
-            </section>
-          </div>
-        );
-
-        const BrowseView = ({ games, isLoading, navigateTo }) => (
-          <div className="max-w-7xl mx-auto px-6 py-12 pb-24">
-            <h1 className="text-4xl font-bold text-white mb-10">Browse Live Deals</h1>
-            {isLoading ? <LoadingGrid /> : <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">{games.map(g => <GameCard key={g.id} game={g} onClick={() => navigateTo('detail', g)} />)}</div>}
-          </div>
-        );
-
-        const GameDetailView = ({ game, storesMap, navigateTo }) => {
-          const [liveDeals, setLiveDeals] = useState([]);
-          const [isLoadingDeals, setIsLoadingDeals] = useState(true);
-          useEffect(() => {
-            const fetchDeals = async () => {
-              if (!game.gameID) return;
-              const res = await fetch(`https://www.cheapshark.com/api/1.0/games?id=${game.gameID}`);
-              const data = await res.json();
-              setLiveDeals(data.deals || []);
-              setIsLoadingDeals(false);
-            };
-            fetchDeals();
-          }, [game.gameID]);
-          return (
-            <div className="max-w-7xl mx-auto px-6 py-8 pb-24">
-              <button onClick={() => navigateTo('browse')} className="text-gray-400 mb-8 flex items-center gap-2"><ArrowLeft size={16}/> Back</button>
-              <h1 className="text-4xl font-bold text-white mb-6">{game.title}</h1>
-              <div className="bg-[#151221] border border-white/5 rounded-2xl p-6">
-                 {isLoadingDeals ? <Loader2 className="animate-spin text-purple-500" /> : 
-                  liveDeals.map(d => <div key={d.dealID} className="flex justify-between py-4 border-b border-white/5">
-                    <span>{storesMap[d.storeID] || 'Store'}</span>
-                    <span className="font-bold text-[#10B981]">${d.price}</span>
-                  </div>)
-                 }
-              </div>
-            </div>
-          );
-        };
 
         function App() {
-          const [view, setView] = useState('home');
-          const [selectedGame, setSelectedGame] = useState(null);
-          const [liveGames, setLiveGames] = useState([]);
-          const [storesMap, setStoresMap] = useState({});
-          const [isLoading, setIsLoading] = useState(true);
+            const [data, setData] = useState([]);
+            const [loading, setLoading] = useState(true);
 
-          useEffect(() => {
-            const loadData = async () => {
-              const [sRes, gRes] = await Promise.all([
-                fetch('https://www.cheapshark.com/api/1.0/stores'),
-                fetch('https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=20')
-              ]);
-              const sData = await sRes.json();
-              const gData = await gRes.json();
-              const m = {}; sData.forEach(s => m[s.storeID] = s.storeName);
-              setStoresMap(m);
-              setLiveGames(gData.map(d => ({
-                id: d.dealID, gameID: d.gameID, title: d.title, price: parseFloat(d.salePrice), 
-                rating: d.metacriticScore, year: 2024, image: d.thumb, status: 'In Stock'
-              })));
-              setIsLoading(false);
-            };
-            loadData();
-          }, []);
+            useEffect(() => {
+                fetch('https://www.cheapshark.com/api/1.0/deals?upperPrice=20&pageSize=10')
+                    .then(res => res.json())
+                    .then(json => {
+                        setData(json);
+                        setLoading(false);
+                    })
+                    .catch(() => setLoading(false));
+            }, []);
 
-          const nav = (v, g) => { setView(v); if(g) setSelectedGame(g); window.scrollTo(0,0); };
+            return (
+                <div className="min-h-screen p-6">
+                    <nav className="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
+                        <h1 className="text-2xl font-bold text-purple-500">StockQuest</h1>
+                        <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Live Market</span>
+                    </nav>
 
-          return (
-            <div className="min-h-screen bg-[#0B0914] text-gray-100 font-sans">
-              <nav className="sticky top-0 z-50 bg-[#0B0914]/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center px-6 justify-between">
-                <div onClick={() => nav('home')} className="font-bold text-xl cursor-pointer">StockQuest</div>
-                <div className="flex gap-4">
-                   <button onClick={() => nav('home')}>Home</button>
-                   <button onClick={() => nav('browse')}>Browse</button>
+                    {loading ? (
+                        <div className="text-center mt-20 text-gray-500">Loading live deals...</div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {data.map(item => (
+                                <div key={item.dealID} className="bg-[#151221] p-4 rounded-2xl border border-white/5">
+                                    <img src={item.thumb} className="w-full h-32 object-contain mb-4 rounded-lg" />
+                                    <h2 className="font-bold mb-2 truncate">{item.title}</h2>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-green-400 font-bold">${item.salePrice}</span>
+                                        <a href={`https://www.cheapshark.com/redirect?dealID=${item.dealID}`} target="_blank" className="text-xs bg-purple-600 px-3 py-1 rounded-lg">View Deal</a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
-              </nav>
-              <main>
-                {view === 'home' && <HomeView curGames={INITIAL_CURATED} navigateTo={nav} />}
-                {view === 'browse' && <BrowseView games={liveGames} isLoading={isLoading} navigateTo={nav} />}
-                {view === 'detail' && <GameDetailView game={selectedGame} storesMap={storesMap} navigateTo={nav} />}
-              </main>
-            </div>
-          );
+            );
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
