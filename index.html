@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StockQuest - Live Game Deals</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -14,648 +14,215 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // --- PASTE ALL YOUR CODE BELOW THIS LINE ---
-        import React, { useState, useEffect } from 'react';
-import { 
-  Home, 
-  LayoutGrid, 
-  Heart, 
-  Search, 
-  RefreshCw, 
-  Bell, 
-  BarChart2, 
-  CheckCircle2, 
-  AlertCircle, 
-  ShoppingCart, 
-  TrendingUp, 
-  Zap, 
-  Star, 
-  ExternalLink, 
-  Filter,
-  ChevronRight,
-  ArrowLeft,
-  Sparkles,
-  Loader2,
-  Gamepad2,
-  MonitorPlay,
-  Disc,
-  Gift,
-  Flame,
-  Layers,
-  DownloadCloud,
-  X,
-  Store
-} from 'lucide-react';
+        // Browser-friendly hooks for your Tablet
+        const { useState, useEffect } = React;
+        const { 
+          Home, LayoutGrid, Heart, Search, RefreshCw, Bell, BarChart2, 
+          CheckCircle2, AlertCircle, ShoppingCart, TrendingUp, Zap, Star, 
+          ExternalLink, Filter, ChevronRight, ArrowLeft, Sparkles, Loader2, 
+          Gamepad2, MonitorPlay, Disc, Gift, Flame, Layers, DownloadCloud, X, Store 
+        } = lucide;
 
-// --- ROBUST IMAGE FALLBACK ---
-const ABSOLUTE_FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900"%3E%3Crect fill="%23151221" width="600" height="900"/%3E%3Cpath fill="%232D283E" d="M250 400h100v100H250z"/%3E%3Ctext fill="%234B5563" font-family="system-ui, sans-serif" font-size="20" font-weight="600" x="50%25" y="55%25" dominant-baseline="middle" text-anchor="middle"%3ENo Cover Available%3C/text%3E%3C/svg%3E';
+        // --- ROBUST IMAGE FALLBACK ---
+        const ABSOLUTE_FALLBACK_IMAGE = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900"%3E%3Crect fill="%23151221" width="600" height="900"/%3E%3Cpath fill="%232D283E" d="M250 400h100v100H250z"/%3E%3Ctext fill="%234B5563" font-family="system-ui, sans-serif" font-size="20" font-weight="600" x="50%25" y="55%25" dominant-baseline="middle" text-anchor="middle"%3ENo Cover Available%3C/text%3E%3C/svg%3E';
 
-// --- INITIAL CURATED LAYOUT (Prices will be overwritten by live data) ---
-const STEAM_POSTER_BASE = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps';
-const INITIAL_CURATED = {
-  trending: [
-    { id: 't1', title: 'Elden Ring', price: 39.99, rating: 96, year: 2022, image: `${STEAM_POSTER_BASE}/1245620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '235201' },
-    { id: 't2', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
-    { id: 't3', title: 'Horizon Zero Dawn', price: 12.49, rating: 88, year: 2020, image: `${STEAM_POSTER_BASE}/1151640/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '213963' },
-    { id: 't4', title: 'God of War', price: 24.99, rating: 94, year: 2022, image: `${STEAM_POSTER_BASE}/1593500/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '236200' },
-    { id: 't5', title: 'Portal 2', price: 0.99, rating: 95, year: 2011, image: `${STEAM_POSTER_BASE}/620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '2' },
-    { id: 't6', title: 'The Last of Us Part I', price: 39.99, rating: 88, year: 2023, image: `${STEAM_POSTER_BASE}/1888930/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '249159' },
-    { id: 't7', title: 'Marvel\'s Spider-Man Remastered', price: 35.99, rating: 87, year: 2022, image: `${STEAM_POSTER_BASE}/1817070/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '241191' },
-    { id: 't8', title: 'Diablo IV', price: 34.99, rating: 86, year: 2023, image: `${STEAM_POSTER_BASE}/2344520/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '254580' },
-  ],
-  inStock: [
-    { id: 's1', title: 'Elden Ring', price: 39.99, rating: 96, year: 2022, image: `${STEAM_POSTER_BASE}/1245620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '235201' },
-    { id: 's2', title: 'Baldur\'s Gate 3', price: 59.99, rating: 97, year: 2023, image: `${STEAM_POSTER_BASE}/1086940/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '206733' },
-    { id: 's3', title: 'Cyberpunk 2077', price: 29.99, rating: 86, year: 2020, image: `${STEAM_POSTER_BASE}/1091500/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '197731' },
-    { id: 's4', title: 'The Witcher 3: Wild Hunt', price: 9.99, rating: 93, year: 2015, image: `${STEAM_POSTER_BASE}/292030/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '112330' },
-    { id: 's5', title: 'Hogwarts Legacy', price: 29.99, rating: 88, year: 2023, image: `${STEAM_POSTER_BASE}/990080/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '243001' },
-    { id: 's6', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
-    { id: 's7', title: 'Grand Theft Auto V', price: 14.99, rating: 96, year: 2013, image: `${STEAM_POSTER_BASE}/271590/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '103550' },
-    { id: 's8', title: 'Hollow Knight', price: 7.49, rating: 90, year: 2017, image: `${STEAM_POSTER_BASE}/367520/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '166162' },
-  ],
-  editorsPicks: [
-    { id: 'e1', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
-    { id: 'e2', title: 'Stardew Valley', price: 11.99, rating: 89, year: 2016, image: `${STEAM_POSTER_BASE}/413150/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '143140' },
-    { id: 'e3', title: 'Sekiro: Shadows Die Twice', price: 29.99, rating: 90, year: 2019, image: `${STEAM_POSTER_BASE}/814380/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '189912' },
-    { id: 'e4', title: 'Marvel\'s Spider-Man Remastered', price: 35.99, rating: 87, year: 2022, image: `${STEAM_POSTER_BASE}/1817070/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '241191' },
-  ]
-};
+        const STEAM_POSTER_BASE = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps';
+        const INITIAL_CURATED = {
+          trending: [
+            { id: 't1', title: 'Elden Ring', price: 39.99, rating: 96, year: 2022, image: `${STEAM_POSTER_BASE}/1245620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '235201' },
+            { id: 't2', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
+            { id: 't3', title: 'Horizon Zero Dawn', price: 12.49, rating: 88, year: 2020, image: `${STEAM_POSTER_BASE}/1151640/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '213963' },
+            { id: 't4', title: 'God of War', price: 24.99, rating: 94, year: 2022, image: `${STEAM_POSTER_BASE}/1593500/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '236200' },
+            { id: 't5', title: 'Portal 2', price: 0.99, rating: 95, year: 2011, image: `${STEAM_POSTER_BASE}/620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '2' },
+            { id: 't6', title: 'The Last of Us Part I', price: 39.99, rating: 88, year: 2023, image: `${STEAM_POSTER_BASE}/1888930/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '249159' },
+            { id: 't7', title: 'Marvel\'s Spider-Man Remastered', price: 35.99, rating: 87, year: 2022, image: `${STEAM_POSTER_BASE}/1817070/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '241191' },
+            { id: 't8', title: 'Diablo IV', price: 34.99, rating: 86, year: 2023, image: `${STEAM_POSTER_BASE}/2344520/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '254580' },
+          ],
+          inStock: [
+            { id: 's1', title: 'Elden Ring', price: 39.99, rating: 96, year: 2022, image: `${STEAM_POSTER_BASE}/1245620/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '235201' },
+            { id: 's2', title: 'Baldur\'s Gate 3', price: 59.99, rating: 97, year: 2023, image: `${STEAM_POSTER_BASE}/1086940/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '206733' },
+            { id: 's3', title: 'Cyberpunk 2077', price: 29.99, rating: 86, year: 2020, image: `${STEAM_POSTER_BASE}/1091500/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '197731' },
+            { id: 's4', title: 'The Witcher 3: Wild Hunt', price: 9.99, rating: 93, year: 2015, image: `${STEAM_POSTER_BASE}/292030/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '112330' },
+            { id: 's5', title: 'Hogwarts Legacy', price: 29.99, rating: 88, year: 2023, image: `${STEAM_POSTER_BASE}/990080/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '243001' },
+            { id: 's6', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
+            { id: 's7', title: 'Grand Theft Auto V', price: 14.99, rating: 96, year: 2013, image: `${STEAM_POSTER_BASE}/271590/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '103550' },
+            { id: 's8', title: 'Hollow Knight', price: 7.49, rating: 90, year: 2017, image: `${STEAM_POSTER_BASE}/367520/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '166162' },
+          ],
+          editorsPicks: [
+            { id: 'e1', title: 'Red Dead Redemption 2', price: 19.99, rating: 97, year: 2018, image: `${STEAM_POSTER_BASE}/1174180/library_600x900_2x.jpg`, status: 'In Stock', trending: true, gameID: '202256' },
+            { id: 'e2', title: 'Stardew Valley', price: 11.99, rating: 89, year: 2016, image: `${STEAM_POSTER_BASE}/413150/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '143140' },
+            { id: 'e3', title: 'Sekiro: Shadows Die Twice', price: 29.99, rating: 90, year: 2019, image: `${STEAM_POSTER_BASE}/814380/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '189912' },
+            { id: 'e4', title: 'Marvel\'s Spider-Man Remastered', price: 35.99, rating: 87, year: 2022, image: `${STEAM_POSTER_BASE}/1817070/library_600x900_2x.jpg`, status: 'In Stock', trending: false, gameID: '241191' },
+          ]
+        };
 
-// Map store IDs to specific icons
-const ICON_MAP = {
-  '1': Zap, '2': Gamepad2, '3': MonitorPlay, '7': Disc, 
-  '8': DownloadCloud, '11': Gift, '15': Flame, '25': Layers
-};
+        const ICON_MAP = { '1': Zap, '2': Gamepad2, '3': MonitorPlay, '7': Disc, '8': DownloadCloud, '11': Gift, '15': Flame, '25': Layers };
 
-// --- AI UTILITIES ---
-const generateGeminiContent = async (prompt, isJson = false) => {
-  const apiKey = ""; 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-  const payload = { contents: [{ parts: [{ text: prompt }] }] };
-  if (isJson) payload.generationConfig = { responseMimeType: "application/json" };
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await response.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text;
-  } catch (err) {
-    return null;
-  }
-};
+        const generateGeminiContent = async (prompt, isJson = false) => {
+          const apiKey = ""; 
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+          const payload = { contents: [{ parts: [{ text: prompt }] }] };
+          if (isJson) payload.generationConfig = { responseMimeType: "application/json" };
+          try {
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text;
+          } catch (err) { return null; }
+        };
 
-// --- UI COMPONENTS ---
+        const GameImage = ({ src, fallbackSrc, alt, className }) => {
+          const [imgSrc, setImgSrc] = useState(src || fallbackSrc || ABSOLUTE_FALLBACK_IMAGE);
+          const [hasError, setHasError] = useState(false);
+          const handleError = () => { if (!hasError && fallbackSrc && imgSrc !== fallbackSrc) { setImgSrc(fallbackSrc); setHasError(true); } else { setImgSrc(ABSOLUTE_FALLBACK_IMAGE); } };
+          return <img src={imgSrc} alt={alt} onError={handleError} className={className} loading="lazy" />;
+        };
 
-const GameImage = ({ src, fallbackSrc, alt, className }) => {
-  const [imgSrc, setImgSrc] = useState(src || fallbackSrc || ABSOLUTE_FALLBACK_IMAGE);
-  const [hasError, setHasError] = useState(false);
-
-  const handleError = () => {
-    if (!hasError && fallbackSrc && imgSrc !== fallbackSrc) {
-      setImgSrc(fallbackSrc);
-      setHasError(true);
-    } else {
-      setImgSrc(ABSOLUTE_FALLBACK_IMAGE);
-    }
-  };
-
-  return <img src={imgSrc} alt={alt} onError={handleError} className={className} loading="lazy" />;
-};
-
-const StatusBadge = ({ status }) => {
-  if (status === 'In Stock') {
-    return (
-      <div className="flex items-center gap-1.5 bg-[#059669]/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#059669]/30">
-        <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></div>
-        <span className="text-xs font-semibold text-[#34D399] tracking-wide uppercase">In Stock</span>
-      </div>
-    );
-  }
-  return (
-    <div className="flex items-center gap-1.5 bg-[#D97706]/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#D97706]/30 bg-opacity-90">
-      <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></div>
-      <span className="text-xs font-semibold text-[#FBBF24] tracking-wide uppercase">Low Stock</span>
-    </div>
-  );
-};
-
-const GameCard = ({ game, onClick }) => (
-  <div onClick={() => onClick(game)} className="group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:ring-2 hover:ring-purple-500/50 bg-[#151221]">
-    <div className="aspect-[2/3] w-full relative bg-[#1A1625]">
-      <GameImage src={game.image} fallbackSrc={game.fallbackImage} alt={game.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0914] via-[#0B0914]/40 to-transparent"></div>
-      
-      <div className="absolute top-0 left-0 right-0 p-3 flex justify-between items-start">
-        <div className="flex flex-col items-start gap-1">
-          <StatusBadge status={game.status} />
-          {game.trending && (
-            <div className="flex items-center gap-1.5 bg-[#7C3AED]/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#7C3AED]/30">
-              <TrendingUp size={12} className="text-[#A78BFA]" />
-              <span className="text-[10px] font-bold text-[#A78BFA] tracking-wider uppercase">Trending</span>
+        const StatusBadge = ({ status }) => {
+          const style = status === 'In Stock' ? "bg-[#059669]/20 border-[#059669]/30 text-[#34D399]" : "bg-[#D97706]/20 border-[#D97706]/30 text-[#FBBF24]";
+          const dot = status === 'In Stock' ? "bg-[#10B981]" : "bg-[#F59E0B]";
+          return (
+            <div className={`flex items-center gap-1.5 backdrop-blur-md px-2.5 py-1 rounded-full border ${style}`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${dot}`}></div>
+              <span className="text-xs font-semibold tracking-wide uppercase">{status}</span>
             </div>
-          )}
-        </div>
-        <button onClick={(e) => { e.stopPropagation(); }} className="p-2 rounded-full bg-black/40 backdrop-blur-sm text-gray-300 hover:text-white hover:bg-black/60 transition-colors shadow-lg">
-          <Heart size={18} />
-        </button>
-      </div>
+          );
+        };
 
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <h3 className="text-white font-bold text-lg mb-2 leading-tight line-clamp-2 drop-shadow-md">{game.title}</h3>
-        <div className="flex items-end justify-between">
-          <div className="flex items-center gap-2 text-sm text-gray-300 drop-shadow">
-            <div className="flex items-center gap-1 text-[#FBBF24]">
-              <Star size={14} fill="currentColor" />
-              <span className="font-semibold">{game.rating}</span>
-            </div>
-            <span>•</span><span>{game.year}</span>
-          </div>
-          <div className="text-right">
-            <div className="text-white font-bold text-xl drop-shadow-md">${game.price.toFixed(2)}</div>
-            {game.retailersCount && <div className="text-xs text-[#10B981]">{game.retailersCount} retailers</div>}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const LoadingGrid = () => (
-  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => <div key={i} className="rounded-2xl aspect-[2/3] bg-white/5 animate-pulse border border-white/10"></div>)}
-  </div>
-);
-
-
-// --- MAIN VIEWS ---
-
-const HomeView = ({ curGames, liveCount, navigateTo }) => {
-  return (
-    <div className="pb-20">
-      <section className="relative pt-24 pb-20 px-6 border-b border-white/5 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:48px_48px]"></div>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-sm font-medium mb-8">
-            <Zap size={14} className="text-purple-400" /> Live tracking across 35+ real retailers
-          </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 max-w-3xl leading-[1.1]">
-            Never miss a <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A855F7] to-[#EC4899]">restock.</span>
-          </h1>
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mb-10 leading-relaxed">
-            Track real-time digital stock and prices for every video game across Steam, Epic Games, GOG, Humble Store, and more — all in one beautiful place.
-          </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <button onClick={() => navigateTo('browse')} className="flex items-center gap-2 bg-gradient-to-r from-[#A855F7] to-[#D946EF] hover:from-[#9333EA] hover:to-[#C026D3] text-white px-8 py-3.5 rounded-xl font-semibold transition-all shadow-lg shadow-purple-500/25">
-              Browse Live Deals <ChevronRight size={18} />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20">
-            {[
-              { label: 'Deals Tracked', value: liveCount > 0 ? liveCount : '...', icon: <BarChart2 size={20} className="text-gray-400" /> },
-              { label: 'Real Retailers', value: '35+', icon: <Store size={20} className="text-[#10B981]" /> },
-              { label: 'Live Updates', value: '24/7', icon: <RefreshCw size={20} className="text-[#FBBF24]" /> },
-              { label: 'Verified Keys', value: '100%', icon: <CheckCircle2 size={20} className="text-purple-400" /> },
-            ].map((stat, i) => (
-              <div key={i} className="bg-[#151221] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-colors">
-                <div className="mb-4">{stat.icon}</div>
-                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="flex items-center gap-2 mb-8">
-          <TrendingUp size={20} className="text-[#A855F7]" />
-          <h2 className="text-sm font-bold text-[#A855F7] tracking-widest uppercase">Trending Live</h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {curGames.trending.map(game => <GameCard key={game.id} game={game} onClick={() => navigateTo('detail', game)} />)}
-        </div>
-      </section>
-
-      <section className="bg-[#0D0B14] py-16 border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center gap-2 mb-8">
-            <Zap size={20} className="text-[#10B981]" />
-            <h2 className="text-sm font-bold text-[#10B981] tracking-widest uppercase">IN</h2>
-          </div>
-          <h3 className="text-3xl font-bold text-white mb-8">In Stock Today (Live)</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {curGames.inStock.map(game => <GameCard key={game.id} game={game} onClick={() => navigateTo('detail', game)} />)}
-          </div>
-        </div>
-      </section>
-
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="flex items-center gap-2 mb-8">
-          <Star size={20} className="text-[#F472B6]" />
-          <h2 className="text-sm font-bold text-[#F472B6] tracking-widest uppercase">Editor's</h2>
-        </div>
-        <h3 className="text-3xl font-bold text-white mb-8">Editor's Picks</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {curGames.editorsPicks.map(game => <GameCard key={game.id} game={game} onClick={() => navigateTo('detail', game)} />)}
-        </div>
-      </section>
-    </div>
-  );
-};
-
-const BrowseView = ({ games, isLoading, navigateTo }) => {
-  return (
-    <div className="max-w-7xl mx-auto px-6 py-12 pb-24">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-        <div>
-          <h1 className="text-4xl font-bold text-white mb-2">Browse Live Deals</h1>
-          <p className="text-gray-400">Showing top {games.length} real-time active deals</p>
-        </div>
-      </div>
-      {isLoading ? <LoadingGrid /> : (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {games.map(game => <GameCard key={`browse-${game.id}`} game={game} onClick={() => navigateTo('detail', game)} />)}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const GameDetailView = ({ game, games, storesMap, navigateTo }) => {
-  const [aiAnalysis, setAiAnalysis] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [liveDeals, setLiveDeals] = useState([]);
-  const [isLoadingDeals, setIsLoadingDeals] = useState(true);
-
-  useEffect(() => {
-    const fetchGameDeals = async () => {
-      setIsLoadingDeals(true);
-      try {
-        if (!game.gameID) return setIsLoadingDeals(false);
-        const res = await fetch(`https://www.cheapshark.com/api/1.0/games?id=${game.gameID}`);
-        const data = await res.json();
-        const sortedDeals = (data.deals || []).sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-        setLiveDeals(sortedDeals);
-      } catch (err) {
-        console.error("Error fetching deals", err);
-      }
-      setIsLoadingDeals(false);
-    };
-    fetchGameDeals();
-  }, [game.gameID]);
-
-  const handleAiAnalysis = async () => {
-    setIsAnalyzing(true);
-    const prompt = `You are an expert video game deal analyst. The user is looking at the game "${game.title}" which is currently priced at $${game.price} (Rating: ${game.rating}/100, Release: ${game.year}). 
-    Write a fun, punchy, 2-3 sentence recommendation answering: "Is this a good game and should I play it right now?". Use a gamer-friendly, enthusiastic tone.`;
-    const response = await generateGeminiContent(prompt);
-    setAiAnalysis(response || "Oops! The AI dropped the controller. Try again later.");
-    setIsAnalyzing(false);
-  };
-
-  const bestDeal = liveDeals.length > 0 ? liveDeals[0] : null;
-  const bestStoreName = bestDeal ? storesMap[bestDeal.storeID] || 'Retailer' : 'Steam';
-  const BestDealStoreIcon = bestDeal ? (ICON_MAP[bestDeal.storeID] || Store) : Zap;
-
-  return (
-    <div className="max-w-7xl mx-auto px-6 py-8 pb-24 animate-in fade-in">
-      <button onClick={() => navigateTo('browse')} className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors text-sm font-medium">
-        <ArrowLeft size={16} /> Back to Browse
-      </button>
-
-      <div className="flex flex-col lg:flex-row gap-12 mb-16">
-        <div className="w-full lg:w-[400px] shrink-0">
-          <div className="rounded-2xl overflow-hidden shadow-2xl shadow-purple-900/20 mb-6 bg-[#151221] aspect-[2/3] relative border border-white/10">
-            <GameImage src={game.image} fallbackSrc={game.fallbackImage} alt={game.title} className="w-full h-full object-cover" />
-          </div>
-          <button className="w-full flex items-center justify-center gap-2 bg-[#1A1625] hover:bg-[#251F36] border border-white/10 text-white px-6 py-4 rounded-xl font-semibold transition-all shadow-sm">
-            <Heart size={20} className="text-gray-400" /> Add to Wishlist
-          </button>
-        </div>
-
-        <div className="flex-1">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">{game.title}</h1>
-          
-          <div className="flex flex-wrap items-center gap-4 text-gray-300 text-sm mb-8">
-            <div className="flex items-center gap-1.5 text-[#FBBF24]">
-              <Star size={16} fill="currentColor" />
-              <span className="font-bold">{game.rating > 0 ? `${game.rating}/100` : 'No Rating'}</span>
-            </div>
-            <span className="text-gray-600">•</span><span>{game.year}</span>
-            {game.originalPrice && game.originalPrice > game.price && (
-               <><span className="text-gray-600">•</span>
-                 <span className="text-[#10B981] font-semibold flex items-center gap-1">
-                   <Zap size={14} /> Currently {Math.round(((game.originalPrice - game.price) / game.originalPrice) * 100)}% Off
-                 </span></>
-            )}
-          </div>
-
-          <div className="mb-10 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl p-6 relative overflow-hidden">
-            <div className="flex items-center gap-2 text-purple-400 font-bold mb-3"><Sparkles size={18} /> ✨ AI Deal Analyst</div>
-            {aiAnalysis ? <p className="text-gray-200 leading-relaxed text-sm">{aiAnalysis}</p> : (
-              <div>
-                <p className="text-gray-400 text-sm mb-4">Let our AI analyze the current price, rating, and market trends.</p>
-                <button onClick={handleAiAnalysis} disabled={isAnalyzing} className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50">
-                  {isAnalyzing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />} {isAnalyzing ? "Analyzing..." : "Ask AI if it's worth it"}
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="bg-[#059669]/10 border border-[#059669]/20 rounded-xl p-6 max-w-sm relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-1 h-full bg-[#10B981]"></div>
-             <div className="flex items-center gap-2 text-[#34D399] text-xs font-bold uppercase tracking-wider mb-2">
-               <BestDealStoreIcon size={14} /> Best Price Now
-             </div>
-             <div className="flex items-end gap-3 text-white">
-               <span className="text-4xl font-black">${bestDeal ? parseFloat(bestDeal.price).toFixed(2) : game.price.toFixed(2)}</span>
-               <span className="text-gray-400 text-sm mb-1">at {bestStoreName}</span>
-             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-16">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3 text-white">
-            <ShoppingCart size={24} />
-            <h2 className="text-2xl font-bold">Real-time Digital Retailer Pricing</h2>
-          </div>
-          <span className="text-xs text-gray-500 flex items-center gap-1">
-            {isLoadingDeals ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} className="text-[#10B981]" />} 
-            {isLoadingDeals ? "Syncing APIs..." : "Live Data Synced"}
-          </span>
-        </div>
-
-        <div className="bg-[#151221] border border-white/5 rounded-2xl overflow-hidden">
-          <table className="w-full text-left border-collapse min-w-[800px]">
-            <thead>
-              <tr className="border-b border-white/5 text-xs font-bold text-gray-500 uppercase tracking-wider bg-white/[0.01]">
-                <th className="py-4 px-6 font-semibold">Official Retailer</th>
-                <th className="py-4 px-6 font-semibold">Live Price</th>
-                <th className="py-4 px-6 font-semibold">Status</th>
-                <th className="py-4 px-6 font-semibold text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {isLoadingDeals ? (
-                <tr><td colSpan="4" className="py-12 text-center text-gray-500"><Loader2 size={24} className="animate-spin mx-auto mb-2 opacity-50" />Fetching deals...</td></tr>
-              ) : liveDeals.length > 0 ? liveDeals.map((deal, idx) => {
-                const storeName = storesMap[deal.storeID] || `Store #${deal.storeID}`;
-                const StoreIcon = ICON_MAP[deal.storeID] || Store;
-                const isBestDeal = idx === 0;
-                const price = parseFloat(deal.price);
-                const retailPrice = parseFloat(deal.retailPrice);
-
-                return (
-                  <tr key={deal.dealID} className="hover:bg-white/[0.02] transition-colors group">
-                    <td className="py-5 px-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-300 border border-white/10 group-hover:bg-purple-500/10 group-hover:text-purple-400 group-hover:border-purple-500/20 transition-all">
-                          <StoreIcon size={20} />
-                        </div>
-                        <div>
-                          <div className="font-bold text-white text-base">{storeName}</div>
-                          {isBestDeal && <div className="text-[10px] font-bold text-[#10B981] uppercase tracking-wider mt-0.5">Best Deal</div>}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-5 px-6">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-white">${price.toFixed(2)}</span>
-                        {retailPrice > price && (
-                          <>
-                            <span className="text-sm text-gray-500 line-through">${retailPrice.toFixed(2)}</span>
-                            <span className="text-xs font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20">
-                              -{Math.round((1 - price/retailPrice) * 100)}%
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-5 px-6"><StatusBadge status="In Stock" /></td>
-                    <td className="py-5 px-6 text-right">
-                      <a href={`https://www.cheapshark.com/redirect?dealID=${deal.dealID}`} target="_blank" rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-colors ${isBestDeal ? 'bg-[#10B981] hover:bg-[#059669] text-white shadow-lg shadow-[#10B981]/20' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
-                        Buy <ExternalLink size={14} />
-                      </a>
-                    </td>
-                  </tr>
-                )
-              }) : (
-                 <tr><td colSpan="4" className="py-12 text-center text-gray-500">No active digital deals found for this title right now.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// --- MAIN APP COMPONENT ---
-export default function App() {
-  const [currentView, setCurrentView] = useState('home');
-  const [selectedGame, setSelectedGame] = useState(null);
-  
-  const [liveGames, setLiveGames] = useState([]);
-  const [liveCuratedGames, setLiveCuratedGames] = useState(INITIAL_CURATED);
-  const [storesMap, setStoresMap] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-  const [aiQuery, setAiQuery] = useState('');
-  const [aiResult, setAiResult] = useState(null);
-  const [isAiThinking, setIsAiThinking] = useState(false);
-
-  const fetchRealTimeGames = async () => {
-    setIsLoading(true);
-    try {
-      // 1. Fetch Real Store Names mapping
-      const storesRes = await fetch('https://www.cheapshark.com/api/1.0/stores');
-      const storesData = await storesRes.json();
-      const sMap = {};
-      storesData.forEach(s => sMap[s.storeID] = s.storeName);
-      setStoresMap(sMap);
-
-      // 2. Fetch mass deals for Browse Page
-      const res = await fetch('https://www.cheapshark.com/api/1.0/deals?onSale=1&sortBy=Metacritic&pageSize=40');
-      const data = await res.json();
-      const uniqueGames = [];
-      const seenIds = new Set();
-
-      data.forEach(deal => {
-        if (!seenIds.has(deal.gameID)) {
-          seenIds.add(deal.gameID);
-          uniqueGames.push({
-            id: deal.dealID,
-            gameID: deal.gameID,
-            title: deal.title,
-            price: parseFloat(deal.salePrice),
-            originalPrice: parseFloat(deal.normalPrice),
-            rating: parseInt(deal.metacriticScore) || Math.round(parseFloat(deal.dealRating) * 10),
-            year: deal.releaseDate > 0 ? new Date(deal.releaseDate * 1000).getFullYear() : 2024,
-            image: deal.steamAppID ? `${STEAM_POSTER_BASE}/${deal.steamAppID}/library_600x900_2x.jpg` : deal.thumb, 
-            fallbackImage: deal.thumb,
-            status: 'In Stock',
-            trending: parseFloat(deal.dealRating) > 8.5
-          });
-        }
-      });
-      setLiveGames(uniqueGames);
-
-      // 3. Update the Curated Home Page items with REAL live prices
-      const allCuratedIds = [...INITIAL_CURATED.trending, ...INITIAL_CURATED.inStock, ...INITIAL_CURATED.editorsPicks].map(g => g.gameID).join(',');
-      const curatedRes = await fetch(`https://www.cheapshark.com/api/1.0/games?id=${allCuratedIds}`);
-      const curatedData = await curatedRes.json();
-
-      const applyLivePrices = (gamesArray) => gamesArray.map(game => {
-        const liveInfo = curatedData[game.gameID];
-        if (liveInfo && liveInfo.deals && liveInfo.deals.length > 0) {
-          // Sort deals by lowest price
-          const lowestDeal = liveInfo.deals.sort((a,b) => parseFloat(a.price) - parseFloat(b.price))[0];
-          return {
-            ...game,
-            price: parseFloat(lowestDeal.price),
-            retailersCount: liveInfo.deals.length
-          };
-        }
-        return game; // Fallback to initial if no active deal found
-      });
-
-      setLiveCuratedGames({
-        trending: applyLivePrices(INITIAL_CURATED.trending),
-        inStock: applyLivePrices(INITIAL_CURATED.inStock),
-        editorsPicks: applyLivePrices(INITIAL_CURATED.editorsPicks),
-      });
-
-    } catch (err) {
-      console.error("Failed to fetch real-time data", err);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    fetchRealTimeGames();
-  }, []);
-
-  const navigateTo = (view, game = null) => {
-    setCurrentView(view);
-    if (game) setSelectedGame(game);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleAiSearch = async () => {
-    if (!aiQuery.trim()) return;
-    setIsAiThinking(true);
-    setAiResult(null);
-
-    const searchPool = [...liveCuratedGames.trending, ...liveCuratedGames.inStock, ...liveGames];
-    const dedupedSearchPool = searchPool.filter((v,i,a)=>a.findIndex(v2=>(v2.gameID===v.gameID))===i);
-    const availableTitles = dedupedSearchPool.slice(0, 50).map(g => ({ id: g.id, title: g.title }));
-    
-    const prompt = `You are a helpful AI game matchmaker. User says: "${aiQuery}". Available games: ${JSON.stringify(availableTitles)}. Return ONLY a JSON object with this schema: {"gameId": "id of the game", "reason": "2-sentence explanation of why it matches."}`;
-    const resultText = await generateGeminiContent(prompt, true);
-    try {
-      const parsed = JSON.parse(resultText);
-      const foundGame = dedupedSearchPool.find(g => g.id === parsed.gameId);
-      if (foundGame) setAiResult({ game: foundGame, reason: parsed.reason });
-      else setAiResult({ error: "Couldn't find a perfect match. Try asking for something else!" });
-    } catch (e) {
-      setAiResult({ error: "My AI sensors got scrambled. Try another request!" });
-    }
-    setIsAiThinking(false);
-  };
-
-  return (
-    <div className="min-h-screen bg-[#0B0914] text-gray-100 font-sans selection:bg-purple-500/30">
-      {isAiModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#151221] border border-white/10 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl shadow-purple-500/20">
-            <div className="p-4 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-purple-500/10 to-transparent">
-              <div className="flex items-center gap-2 text-white font-bold"><Sparkles size={18} className="text-purple-400" /> ✨ AI Game Matchmaker</div>
-              <button onClick={() => setIsAiModalOpen(false)} className="text-gray-400 hover:text-white transition-colors"><X size={20} /></button>
-            </div>
-            <div className="p-6">
-              <p className="text-sm text-gray-400 mb-4">Tell our AI what kind of vibe you're looking for, and we'll find the perfect game from our massive live database.</p>
-              <div className="flex gap-2 mb-6">
-                <input type="text" value={aiQuery} onChange={(e) => setAiQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleAiSearch()} placeholder="e.g. A sprawling open world RPG..." className="flex-1 bg-[#0B0914] border border-white/10 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-purple-500/50" />
-                <button onClick={handleAiSearch} disabled={isAiThinking || !aiQuery.trim()} className="bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 w-[100px] justify-center">
-                  {isAiThinking ? <Loader2 size={18} className="animate-spin" /> : "Search"}
-                </button>
-              </div>
-              {aiResult && (
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4 animate-in fade-in slide-in-from-bottom-4">
-                  {aiResult.error ? <p className="text-red-400 text-sm">{aiResult.error}</p> : (
-                    <div>
-                      <div className="flex gap-4 items-start mb-4">
-                        <div className="w-16 h-24 shrink-0 rounded-md overflow-hidden relative">
-                           <GameImage src={aiResult.game.image} fallbackSrc={aiResult.game.fallbackImage} alt={aiResult.game.title} className="absolute inset-0 w-full h-full object-cover" />
-                        </div>
-                        <div>
-                          <h4 className="text-white font-bold text-lg">{aiResult.game.title}</h4>
-                          <p className="text-[#10B981] font-semibold">${aiResult.game.price.toFixed(2)}</p>
-                        </div>
-                      </div>
-                      <p className="text-gray-300 text-sm italic mb-4">"{aiResult.reason}"</p>
-                      <button onClick={() => { setIsAiModalOpen(false); navigateTo('detail', aiResult.game); }} className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg font-semibold transition-colors">
-                        View Game
-                      </button>
+        const GameCard = ({ game, onClick }) => (
+          <div onClick={() => onClick(game)} className="group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:ring-2 hover:ring-purple-500/50 bg-[#151221]">
+            <div className="aspect-[2/3] w-full relative bg-[#1A1625]">
+              <GameImage src={game.image} fallbackSrc={game.fallbackImage} alt={game.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0914] via-[#0B0914]/40 to-transparent"></div>
+              <div className="absolute top-0 left-0 right-0 p-3 flex justify-between items-start">
+                <div className="flex flex-col items-start gap-1">
+                  <StatusBadge status={game.status} />
+                  {game.trending && (
+                    <div className="flex items-center gap-1.5 bg-[#7C3AED]/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-[#7C3AED]/30">
+                      <TrendingUp size={12} className="text-[#A78BFA]" />
+                      <span className="text-[10px] font-bold text-[#A78BFA] tracking-wider uppercase">Trending</span>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <nav className="sticky top-0 z-50 bg-[#0B0914]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-10">
-            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigateTo('home')}>
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
-                <LayoutGrid size={18} className="text-white" />
+                <button onClick={(e) => { e.stopPropagation(); }} className="p-2 rounded-full bg-black/40 backdrop-blur-sm text-gray-300 hover:text-white hover:bg-black/60 shadow-lg"><Heart size={18} /></button>
               </div>
-              <span className="font-bold text-xl tracking-tight text-white">StockQuest</span>
-            </div>
-            <div className="hidden md:flex items-center gap-1">
-              <button onClick={() => navigateTo('home')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentView === 'home' ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                <Home size={16} /> Home
-              </button>
-              <button onClick={() => navigateTo('browse')} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${(currentView === 'browse' || currentView === 'detail') ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-                <LayoutGrid size={16} /> Browse
-              </button>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <h3 className="text-white font-bold text-lg mb-2 leading-tight line-clamp-2">{game.title}</h3>
+                <div className="flex items-end justify-between">
+                  <div className="flex items-center gap-2 text-sm text-gray-300">
+                    <div className="flex items-center gap-1 text-[#FBBF24]"><Star size={14} fill="currentColor" /><span>{game.rating}</span></div>
+                    <span>•</span><span>{game.year}</span>
+                  </div>
+                  <div className="text-right"><div className="text-white font-bold text-xl">${game.price.toFixed(2)}</div></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button onClick={() => setIsAiModalOpen(true)} className="hidden md:flex items-center gap-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 text-purple-300 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
-              <Sparkles size={14} /> ✨ Matchmaker
-            </button>
-            <button onClick={fetchRealTimeGames} disabled={isLoading} className="flex items-center gap-2 bg-[#1A1625] hover:bg-[#251F36] disabled:opacity-50 border border-white/10 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              <RefreshCw size={14} className={isLoading ? "animate-spin text-purple-500" : ""} /> Sync Live Market
-            </button>
+        );
+
+        const LoadingGrid = () => (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {[...Array(10)].map((_, i) => <div key={i} className="rounded-2xl aspect-[2/3] bg-white/5 animate-pulse border border-white/10"></div>)}
           </div>
-        </div>
-      </nav>
+        );
 
-      <main>
-        {currentView === 'home' && <HomeView curGames={liveCuratedGames} liveCount={liveGames.length} navigateTo={navigateTo} />}
-        {currentView === 'browse' && <BrowseView games={liveGames} isLoading={isLoading} navigateTo={navigateTo} />}
-        {currentView === 'detail' && selectedGame && <GameDetailView game={selectedGame} storesMap={storesMap} navigateTo={navigateTo} />}
-      </main>
-    </div>
-  );
-  }
-        // (Paste everything from 'import React...' all the way to the end here)
-        
-        // --- PASTE ALL YOUR CODE ABOVE THIS LINE ---
+        const HomeView = ({ curGames, liveCount, navigateTo }) => (
+          <div className="pb-20">
+            <section className="relative pt-24 pb-20 px-6 border-b border-white/5 overflow-hidden">
+              <div className="max-w-7xl mx-auto relative z-10">
+                <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-[1.1]">Never miss a <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A855F7] to-[#EC4899]">restock.</span></h1>
+                <p className="text-lg text-gray-400 max-w-2xl mb-10">Track real-time digital stock and prices across all major stores.</p>
+                <button onClick={() => navigateTo('browse')} className="bg-gradient-to-r from-[#A855F7] to-[#D946EF] text-white px-8 py-3.5 rounded-xl font-semibold shadow-lg">Browse Live Deals</button>
+              </div>
+            </section>
+            <section className="max-w-7xl mx-auto px-6 py-16">
+              <h2 className="text-sm font-bold text-[#A855F7] tracking-widest uppercase mb-8">Trending Live</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">{curGames.trending.map(g => <GameCard key={g.id} game={g} onClick={() => navigateTo('detail', g)} />)}</div>
+            </section>
+          </div>
+        );
 
-        // This final line tells React to put your website into the 'root' div
+        const BrowseView = ({ games, isLoading, navigateTo }) => (
+          <div className="max-w-7xl mx-auto px-6 py-12 pb-24">
+            <h1 className="text-4xl font-bold text-white mb-10">Browse Live Deals</h1>
+            {isLoading ? <LoadingGrid /> : <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">{games.map(g => <GameCard key={g.id} game={g} onClick={() => navigateTo('detail', g)} />)}</div>}
+          </div>
+        );
+
+        const GameDetailView = ({ game, storesMap, navigateTo }) => {
+          const [liveDeals, setLiveDeals] = useState([]);
+          const [isLoadingDeals, setIsLoadingDeals] = useState(true);
+          useEffect(() => {
+            const fetchDeals = async () => {
+              if (!game.gameID) return;
+              const res = await fetch(`https://www.cheapshark.com/api/1.0/games?id=${game.gameID}`);
+              const data = await res.json();
+              setLiveDeals(data.deals || []);
+              setIsLoadingDeals(false);
+            };
+            fetchDeals();
+          }, [game.gameID]);
+          return (
+            <div className="max-w-7xl mx-auto px-6 py-8 pb-24">
+              <button onClick={() => navigateTo('browse')} className="text-gray-400 mb-8 flex items-center gap-2"><ArrowLeft size={16}/> Back</button>
+              <h1 className="text-4xl font-bold text-white mb-6">{game.title}</h1>
+              <div className="bg-[#151221] border border-white/5 rounded-2xl p-6">
+                 {isLoadingDeals ? <Loader2 className="animate-spin text-purple-500" /> : 
+                  liveDeals.map(d => <div key={d.dealID} className="flex justify-between py-4 border-b border-white/5">
+                    <span>{storesMap[d.storeID] || 'Store'}</span>
+                    <span className="font-bold text-[#10B981]">${d.price}</span>
+                  </div>)
+                 }
+              </div>
+            </div>
+          );
+        };
+
+        function App() {
+          const [view, setView] = useState('home');
+          const [selectedGame, setSelectedGame] = useState(null);
+          const [liveGames, setLiveGames] = useState([]);
+          const [storesMap, setStoresMap] = useState({});
+          const [isLoading, setIsLoading] = useState(true);
+
+          useEffect(() => {
+            const loadData = async () => {
+              const [sRes, gRes] = await Promise.all([
+                fetch('https://www.cheapshark.com/api/1.0/stores'),
+                fetch('https://www.cheapshark.com/api/1.0/deals?onSale=1&pageSize=20')
+              ]);
+              const sData = await sRes.json();
+              const gData = await gRes.json();
+              const m = {}; sData.forEach(s => m[s.storeID] = s.storeName);
+              setStoresMap(m);
+              setLiveGames(gData.map(d => ({
+                id: d.dealID, gameID: d.gameID, title: d.title, price: parseFloat(d.salePrice), 
+                rating: d.metacriticScore, year: 2024, image: d.thumb, status: 'In Stock'
+              })));
+              setIsLoading(false);
+            };
+            loadData();
+          }, []);
+
+          const nav = (v, g) => { setView(v); if(g) setSelectedGame(g); window.scrollTo(0,0); };
+
+          return (
+            <div className="min-h-screen bg-[#0B0914] text-gray-100 font-sans">
+              <nav className="sticky top-0 z-50 bg-[#0B0914]/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center px-6 justify-between">
+                <div onClick={() => nav('home')} className="font-bold text-xl cursor-pointer">StockQuest</div>
+                <div className="flex gap-4">
+                   <button onClick={() => nav('home')}>Home</button>
+                   <button onClick={() => nav('browse')}>Browse</button>
+                </div>
+              </nav>
+              <main>
+                {view === 'home' && <HomeView curGames={INITIAL_CURATED} navigateTo={nav} />}
+                {view === 'browse' && <BrowseView games={liveGames} isLoading={isLoading} navigateTo={nav} />}
+                {view === 'detail' && <GameDetailView game={selectedGame} storesMap={storesMap} navigateTo={nav} />}
+              </main>
+            </div>
+          );
+        }
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
